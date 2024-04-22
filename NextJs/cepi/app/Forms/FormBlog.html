@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajouter une publication</title>
+</head>
+<body>
+    <h2>Ajouter une publication</h2>
+    <form id="blogForm">
+        <label for="titre">Titre :</label><br>
+        <input type="text" id="titre" name="Titre" required><br><br>
+    
+        <label for="contenu">Contenu :</label><br>
+        <textarea id="contenu" name="Contenu" rows="4" cols="50" required></textarea><br><br>
+    
+        <input type="hidden" id="auteur" name="Auteur" value="UserTest">
+    
+        <input type="hidden" id="date" name="DatePublication" required style="display: none;">
+    
+        <input onclick="confirmAndSubmit();" type="button" value="Ajouter" />
+    </form>
+    <script>
+          // Function pour confirmation popup
+function confirmAndSubmit() {
+    if (confirm("Voulez-vous vraiment ajouter cette publication ?")) {
+        submitForm();
+    } else {
+        redirectToPagePrincipal();
+    }
+}
+
+// Function pour soumettre le formulaire
+async function submitForm() {
+    const formData = new FormData(document.getElementById('blogForm'));
+    try {
+        const response = await fetch('http://localhost:3000/blogs', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(Object.fromEntries(formData))
+        });
+        // Vérifier si la soumission a réussi
+        if (response.ok) {
+            redirectToPagePrincipal(); // Rediriger après la soumission réussie
+        } else {
+            console.error('Erreur lors de la soumission :', response.status);
+            alert('Une erreur est survenue lors de la soumission du formulaire');
+        }
+    } catch (error) {
+        console.error('Erreur :', error);
+        alert('Une erreur est survenue');
+    }
+}
+
+// Fonction pour rediriger vers la page principale
+function redirectToPagePrincipal() {
+    window.location.href = 'PagePrincipal.html';
+}
+
+const now = new Date();
+const formattedDate = now.toISOString().slice(0, 10); // Format : YYYY-MM-DD
+document.getElementById('date').value = formattedDate;
+</script>
+</body>
+</html>
